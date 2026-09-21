@@ -1,72 +1,41 @@
-# AI Agent 설계 및 구축 Cookbook
+# AI Agent 설계 및 구축 Cookbook — 실습 소스
 
-작은 LLM 호출에서 시작해 Tool Calling, Structured Output, ReAct, LangGraph, Agentic RAG, Multi-Agent, Memory, Middleware, Retry, HITL, Evaluation까지 단계적으로 실습하는 **Step by Step Cookbook**입니다.
+이 저장소는 아래 Notion 교재를 수업 진행 기준으로 사용합니다.
 
-교재: https://app.notion.com/p/AI-Agent-Cookbook-Step-by-Step-3df91bd5a9ac8167928af84bceafc375
+- 교재: https://app.notion.com/p/AI-Agent-Cookbook-Step-by-Step-3df91bd5a9ac8167928af84bceafc375
 
-## 수업용 저장소 사용법
+각 Step 폴더에는:
+- `practice/` : 수업 중 TODO를 채우는 실습 준비 소스
+- `complete/` : 교재 코드 기준 실습 완료 소스
 
-이 저장소는 브로드캐스팅 실강에서 긴 라이브코딩을 줄이고, 수강생이 **설명 → 짧은 구현 → 실행 → 확인 → 응용** 흐름으로 학습하도록 구성합니다.
+중간에 놓쳤다면 현재 Step의 `complete/`에서 같은 파일명을 찾아 실행한 뒤 다음 Step으로 합류하면 됩니다.
 
-- `00_setup/` : 환경 확인, API Key 확인, 전체 Smoke Test
-- `01_starter/` : 수강생이 핵심 TODO를 직접 채우는 시작 코드
-- `02_complete/` : 검증된 완성 예제
-- `03_checkpoint/` : 수업 중 막힌 수강생이 다시 합류하는 복구 지점
-- `data/` : 외부 API 없이 연습할 수 있는 샘플 데이터
-- `tools/` : Mock Tool 모음
-- `tests/` : Tool/환경 기본 테스트
-- `challenge/` : 빠르게 끝낸 수강생용 추가 과제
-- `final_project/` : 종합실습 Starter / Complete
-- `CLASS_FLOW.md` : 교수자 진행 순서
+## 진행 순서
 
-기존 루트의 `step*.py` 파일은 기존 교재 링크와의 호환성을 위해 유지합니다.
+1. `step01_llm/` — Step 01 — 가장 단순한 LLM 호출
+2. `step02_tool_calling/` — Step 02 — Tool 1개 연결하기
+3. `step03_multi_tool_structured_output/` — Step 03 — 여러 Tool 선택과 Structured Output
+4. `step04_react_streaming/` — Step 04 — ReAct 흐름과 Streaming
+5. `step05_langgraph_state_node_edge/` — Step 05 — LangGraph State, Node, Edge
+6. `step06_conditional_loop/` — Step 06 — 조건 분기와 Loop
+7. `step07_agentic_workflow/` — Step 07 — Goal → Plan → Execute → Reflect
+8. `step08_agentic_rag/` — Step 08 — Retrieval Tool / Agentic RAG Loop
+9. `step09_handoff/` — Step 09 — Agent Handoff
+10. `step10_supervisor/` — Step 10 — Supervisor / Agent-as-Tool
+11. `step11_parallel/` — Step 11 — Fan-out / Fan-in
+12. `step12_harness_memory_retry/` — Step 12 — Middleware / Memory / Retry
+13. `step13_hitl/` — Step 13 — Human-in-the-Loop
+14. `step14_trace_evaluation/` — Step 14 — Trace와 Agent 평가
+15. `final_multi_agent/` — Final — 통합 고객지원 Multi-Agent
 
-## 실습 환경
-
-| 항목 | 기준 |
-| --- | --- |
-| IDE | Visual Studio Code |
-| Python | 3.11 권장, 3.10 이상 |
-| 가상환경 | `.venv` |
-| langchain | 1.4.1 |
-| langchain-openai | 1.6.2 |
-| langgraph | 1.2.11 |
-| python-dotenv | 1.2.3 |
-| pydantic | 2.13.5 |
-
-### 시작
+## 환경
 
 ```bash
-git clone https://github.com/comstudynews/ai-agent-cookbook.git
-cd ai-agent-cookbook
-
-python3 -m venv .venv
-source .venv/bin/activate   # Windows는 .venv\Scripts\activate
-
+python -m venv .venv
 python -m pip install -r requirements.txt
 python check_env.py
-python 00_setup/check_api_key.py
 ```
 
-프로젝트 루트에 `.env` 파일을 만들고 API Key와 수업에서 사용할 모델명을 설정합니다.
+`.env.example`을 복사해 `.env`를 만들고 본인의 API Key를 설정하세요.
 
-```text
-OPENAI_API_KEY=본인의_OpenAI_API_Key
-OPENAI_MODEL=수업에서_사용할_모델명
-```
-
-> `.env`와 API Key는 GitHub에 올리지 않습니다.
-
-## 권장 수업 패턴
-
-1. Cookbook에서 **왜 배우는가 / 전체 구조**를 먼저 설명합니다.
-2. 교수자가 Complete 실행 결과를 짧게 보여줍니다.
-3. 수강생은 `01_starter/`의 TODO만 직접 채웁니다.
-4. 정상 결과를 확인하고 한 가지 조건을 바꿔봅니다.
-5. 해결이 오래 걸리면 `03_checkpoint/`에서 다시 합류합니다.
-6. 빠른 수강생은 `challenge/`를 진행합니다.
-7. 마지막에는 `final_project/`로 핵심 요소를 통합합니다.
-
-## 보안
-
-`.env`, API Key, 개인 계정정보는 커밋하지 않습니다. 공개 저장소이므로 수업 내부정보나 개인정보도 올리지 않습니다.
+> Complete 소스는 지정된 Notion 교재의 코드와 일치시키는 것을 우선하며, Practice 소스는 그 코드에서 해당 Step의 핵심 부분만 TODO 처리합니다.
