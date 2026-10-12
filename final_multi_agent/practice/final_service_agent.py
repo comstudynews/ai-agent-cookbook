@@ -1,3 +1,6 @@
+# TODO: Tool부터 검증 Graph까지 연결 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import os
 from dotenv import load_dotenv
 from langchain.agents import create_agent
@@ -116,8 +119,10 @@ def ask_policy_agent(question: str) -> str:
 
 supervisor = create_agent(
     model=model,
-    # TODO 1: 두 전문 Agent Tool을 등록하세요.
-    tools=[...],
+    tools=[
+        ask_product_agent,
+        ask_policy_agent,
+    ],
     system_prompt=(
         "당신은 고객지원 Supervisor입니다. "
         "상품 정보가 필요하면 ask_product_agent를 사용하고, "
@@ -129,8 +134,7 @@ supervisor = create_agent(
     # 무한한 모델 호출을 막기 위한 Harness입니다.
     middleware=[
         ModelCallLimitMiddleware(
-            # TODO 2: 모델 호출 한도를 8회로 설정하세요.
-            run_limit=...,
+            run_limit=8,
             exit_behavior="end",
         )
     ],

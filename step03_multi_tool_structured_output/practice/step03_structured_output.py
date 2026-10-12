@@ -1,3 +1,6 @@
+# TODO: Tool 선택과 응답 필드 비교 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import os
 from typing import Literal
 
@@ -43,8 +46,7 @@ agent = create_agent(
 
     # 최종 결과를 SupportResult Schema에 맞는
     # Structured Output으로 받습니다.
-    # TODO: SupportResult Schema를 연결하세요.
-    response_format=...,
+    response_format=ToolStrategy(SupportResult),
 
     system_prompt=(
         "사용자 문의를 product, policy, other 중 하나로 분류하고 "

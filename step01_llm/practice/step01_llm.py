@@ -1,3 +1,6 @@
+# TODO: 질문 변경 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -12,8 +15,7 @@ model = ChatOpenAI(
 )
 
 # 아직 Tool 없이 LLM 자체에 질문합니다.
-# TODO: model.invoke()로 질문을 전달하세요.
-response = ...
+response = model.invoke("AI Agent를 한 문장으로 설명해 주세요.")
 
 # 최신 LangChain 메시지는 .text 속성으로 텍스트만 안전하게 꺼낼 수 있습니다.
 print(response.text)

@@ -21,7 +21,7 @@ def improve(state: State) -> dict:
     }
 
 def decide(state: State) -> Literal["retry", "end"]:
-    # 정확히 3번 실행한 뒤 종료하도록 결정적 조건을 사용합니다.
+    # 세 번 실행 후 종료
     if state["attempt_count"] < 3:
         return "retry"
     return "end"

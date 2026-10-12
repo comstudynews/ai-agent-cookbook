@@ -1,9 +1,12 @@
+# TODO: Tool부터 검증 Graph까지 연결 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 from typing import Literal, TypedDict
 
 from final_service_agent import run_service
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, START, StateGraph
-from langgraph.types import interrupt
+from langgraph.types import Command, interrupt
 
 class State(TypedDict):
     question: str
@@ -11,6 +14,8 @@ class State(TypedDict):
     passed: bool
     retry_count: int
     approved: bool | None
+    force_validation_fail: bool
+    review_status: str
 
 def call_agent(state: State) -> dict:
     result = run_service(state["question"])
@@ -37,6 +42,10 @@ def validate(state: State) -> dict:
 
     passed = all(checks) if checks else bool(answer.strip())
 
+    # 강제 실패는 학습용으로만 사용합니다.
+    if state["force_validation_fail"]:
+        passed = False
+
     print(f"[VALIDATE] passed={passed}")
 
     return {
@@ -46,8 +55,13 @@ def validate(state: State) -> dict:
 def route_after_validate(
     state: State,
 ) -> Literal["end", "retry", "human"]:
-    # TODO 1: 검증 결과와 재시도 횟수에 따라 end/retry/human을 결정하세요.
-    ...
+    if state["passed"]:
+        return "end"
+
+    if state["retry_count"] < 1:
+        return "retry"
+
+    return "human"
 
 def retry_node(state: State) -> dict:
     retry_count = state["retry_count"] + 1
@@ -59,12 +73,17 @@ def retry_node(state: State) -> dict:
     }
 
 def human_review(state: State) -> dict:
-    # TODO 2: Human Review 지점에서 interrupt 하세요.
-    approved = ...
+    approved = interrupt({
+        "question": "자동 검증에 실패했습니다. 현재 답변을 승인하시겠습니까?",
+        "answer": state["answer"],
+    })
+    return {"approved": bool(approved)}
 
-    return {
-        "approved": bool(approved),
-    }
+def finish_review(state: State) -> dict:
+    # 승인과 거절을 최종 상태에 명시합니다.
+    status = "승인" if state["approved"] else "거절"
+    print(f"[HUMAN REVIEW] {status}")
+    return {"review_status": status}
 
 builder = StateGraph(State)
 
@@ -72,6 +91,7 @@ builder.add_node("call_agent", call_agent)
 builder.add_node("validate", validate)
 builder.add_node("retry", retry_node)
 builder.add_node("human_review", human_review)
+builder.add_node("finish_review", finish_review)
 
 builder.add_edge(START, "call_agent")
 builder.add_edge("call_agent", "validate")
@@ -87,7 +107,8 @@ builder.add_conditional_edges(
 )
 
 builder.add_edge("retry", "call_agent")
-builder.add_edge("human_review", END)
+builder.add_edge("human_review", "finish_review")
+builder.add_edge("finish_review", END)
 
 graph = builder.compile(
     checkpointer=InMemorySaver()
@@ -109,8 +130,34 @@ result = graph.invoke(
         "passed": False,
         "retry_count": 0,
         "approved": None,
+        "force_validation_fail": False,
+        "review_status": "",
     },
     config,
 )
 
 print("최종 결과:", result)
+
+# 강제 검증 실패 경로는 선택 실습입니다.
+# 실행하면 모델 API가 추가로 호출됩니다.
+RUN_FAILURE_DEMO = False
+
+if RUN_FAILURE_DEMO:
+    fail_config = {"configurable": {"thread_id": "final-failure-demo"}}
+    failed = graph.invoke(
+        {
+            "question": "모니터 재고와 환불 가능 기간을 알려 주세요.",
+            "answer": "",
+            "passed": False,
+            "retry_count": 0,
+            "approved": None,
+            "force_validation_fail": True,
+            "review_status": "",
+        },
+        fail_config,
+    )
+    print("사람 검토 대기:", "__interrupt__" in failed)
+
+    if "__interrupt__" in failed:
+        rejected = graph.invoke(Command(resume=False), fail_config)
+        print("검토 결과:", rejected["review_status"])

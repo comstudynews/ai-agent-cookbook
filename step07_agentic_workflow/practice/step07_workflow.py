@@ -1,3 +1,6 @@
+# TODO: 정상·실패·Retry 비교 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 from typing import Literal, TypedDict
 from langgraph.graph import StateGraph, START, END
 
@@ -7,6 +10,7 @@ class State(TypedDict):
     execution: list[str]
     passed: bool
     retry_count: int
+    simulate_first_fail: bool
 
 def plan_node(state: State) -> dict:
     # Goal을 달성하기 위한 작은 작업으로 분해합니다.
@@ -18,13 +22,18 @@ def execute_node(state: State) -> dict:
     return {"execution": execution}
 
 def reflect_node(state: State) -> dict:
-    # 세 작업이 모두 수행되었는지 검사합니다.
     passed = len(state["execution"]) == 3
+    # 실패 경로 관찰용: 첫 번째 검토만 실패시킵니다.
+    if state["simulate_first_fail"] and state["retry_count"] == 0:
+        passed = False
+    print(f"[reflect] passed={passed}, retry={state['retry_count']}")
     return {"passed": passed}
 
 def route_after_reflect(state: State) -> Literal["end", "retry"]:
-    # TODO: passed와 retry_count를 기준으로 end/retry를 결정하세요.
-    ...
+    # 품질 기준을 통과했으면 종료합니다.
+    if state["passed"] or state["retry_count"] >= 1:
+        return "end"
+    return "retry"
 
 def retry_node(state: State) -> dict:
     return {"retry_count": state["retry_count"] + 1}
@@ -58,9 +67,22 @@ result = graph.invoke({
     "execution": [],
     "passed": False,
     "retry_count": 0,
+    "simulate_first_fail": False,
 })
 
 print("Goal:", result["goal"])
 print("Plan:", result["plan"])
 print("Execute:", result["execution"])
 print("Reflect passed:", result["passed"])
+
+# 첫 검토 실패 → Retry → 두 번째 검토 통과
+retry_result = graph.invoke({
+    "goal": "기술 보고서 재검토",
+    "plan": [],
+    "execution": [],
+    "passed": False,
+    "retry_count": 0,
+    "simulate_first_fail": True,
+})
+print("재시도 횟수:", retry_result["retry_count"])
+print("재검토 결과:", retry_result["passed"])

@@ -1,3 +1,6 @@
+# TODO: Streaming 이벤트 분석 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import os
 from dotenv import load_dotenv
 from langchain.agents import create_agent
@@ -42,5 +45,15 @@ agent = create_agent(
     ),
 )
 
-# TODO: agent.stream(..., stream_mode="updates", version="v2")로
-# 실행 이벤트를 관찰하는 코드를 작성하세요.
+for chunk in agent.stream(
+    {
+        "messages": [
+            {"role": "user", "content": "모니터를 지금 주문할 수 있나요?"}
+        ]
+    },
+    stream_mode="updates",
+    version="v2",
+):
+    print("이벤트:", chunk["type"])
+    print("내용:", chunk["data"])
+    print("-" * 60)

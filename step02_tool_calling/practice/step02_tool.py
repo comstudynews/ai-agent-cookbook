@@ -1,3 +1,6 @@
+# TODO: Tool 호출 결과 비교 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import os
 from dotenv import load_dotenv
 from langchain.agents import create_agent
@@ -9,12 +12,11 @@ load_dotenv()
 # @tool을 붙이면 일반 Python 함수가 Agent가 호출할 수 있는 Tool이 됩니다.
 @tool
 def multiply(a: int, b: int) -> int:
-    """두 정수를 곱합니다. 산술 곱셈이 필요할 때 사용합니다."""
+    """두 정수를 곱합니다."""
 
-    # 실제 Tool이 호출되었는지 터미널에서 확인하기 위한 로그입니다.
+    # Tool 호출 로그
     print(f"[TOOL] multiply({a}, {b})")
-    # TODO 1: 두 수의 곱을 반환하세요.
-    return ...
+    return a * b
 
 model = ChatOpenAI(
     model=os.environ["OPENAI_MODEL"],
@@ -24,8 +26,7 @@ model = ChatOpenAI(
 # create_agent는 모델과 Tool을 연결하고 Tool Calling Loop를 구성합니다.
 agent = create_agent(
     model=model,
-    # TODO 2: multiply Tool을 등록하세요.
-    tools=[...],
+    tools=[multiply],
     system_prompt=(
         "당신은 계산 도우미입니다. "
         "곱셈 계산은 반드시 multiply 도구를 사용하고, 도구 결과를 바탕으로 답하세요."

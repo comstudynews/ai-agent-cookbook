@@ -1,3 +1,6 @@
+# TODO: Supervisor·Swarm 역할 교체 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import os
 from dotenv import load_dotenv
 from langchain.agents import create_agent
@@ -53,8 +56,7 @@ def writing_task(context: str) -> str:
 # Supervisor는 두 전문 Agent를 Tool처럼 사용합니다.
 supervisor = create_agent(
     model=model,
-    # TODO: 두 전문 Agent Tool을 Supervisor에 등록하세요.
-    tools=[...],
+    tools=[research_task, writing_task],
     system_prompt=(
         "당신은 Supervisor입니다. 사용자가 설명을 요청하면 "
         "반드시 research_task를 먼저 호출하고, "

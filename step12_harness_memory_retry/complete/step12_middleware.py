@@ -26,7 +26,7 @@ agent = create_agent(
     tools=[add],
     system_prompt="덧셈은 반드시 add 도구를 사용하세요.",
 
-    # 한 번의 Agent 실행에서 모델 호출 횟수를 최대 4회로 제한합니다.
+    # 모델 호출 최대 4회
     middleware=[
         ModelCallLimitMiddleware(
             run_limit=4,

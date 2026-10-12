@@ -25,7 +25,7 @@ model = ChatOpenAI(
     use_responses_api=True,
 )
 
-# 두 Tool을 모두 Agent에게 제공합니다.
+# Tool 등록
 agent = create_agent(
     model=model,
     tools=[add, multiply],

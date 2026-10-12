@@ -1,3 +1,6 @@
+# TODO: Handoff 유무 비교 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 from typing import TypedDict
 from langgraph.graph import StateGraph, START, END
 from langgraph.types import Command
@@ -12,8 +15,10 @@ def tech_agent(state: State) -> Command:
     if "결제" in state["request"]:
         print("[tech_agent] 결제 담당에게 Handoff")
 
-        # TODO: billing_agent로 Handoff하는 Command를 작성하세요.
-        return Command(update={}, goto=END)
+        return Command(
+            update={"active_agent": "billing_agent"},
+            goto="billing_agent",
+        )
 
     return Command(
         update={
@@ -51,3 +56,12 @@ result = graph.invoke({
 
 print("최종 담당:", result["active_agent"])
 print("결과:", result["result"])
+
+# 기술 문의는 Handoff 없이 종료합니다.
+normal = graph.invoke({
+    "request": "프로그램 설치 오류가 발생했습니다.",
+    "active_agent": "tech_agent",
+    "result": "",
+})
+print("기술 문의 담당:", normal["active_agent"])
+print("기술 문의 결과:", normal["result"])

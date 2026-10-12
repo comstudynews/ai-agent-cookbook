@@ -1,3 +1,6 @@
+# TODO: 검색 성공·실패 경로 비교 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 from typing import Literal, TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -29,8 +32,13 @@ def search_node(state: State) -> dict:
     }
 
 def route_after_search(state: State) -> Literal["done", "rewrite", "stop"]:
-    # TODO: 검색 성공/재시도 횟수에 따라 done, rewrite, stop을 결정하세요.
-    ...
+    if state["found"]:
+        return "done"
+
+    if state["retry_count"] < 2:
+        return "rewrite"
+
+    return "stop"
 
 def rewrite_node(state: State) -> dict:
     # 학습용 결정적 예제입니다.

@@ -9,9 +9,9 @@ load_dotenv()
 # @tool을 붙이면 일반 Python 함수가 Agent가 호출할 수 있는 Tool이 됩니다.
 @tool
 def multiply(a: int, b: int) -> int:
-    """두 정수를 곱합니다. 산술 곱셈이 필요할 때 사용합니다."""
+    """두 정수를 곱합니다."""
 
-    # 실제 Tool이 호출되었는지 터미널에서 확인하기 위한 로그입니다.
+    # Tool 호출 로그
     print(f"[TOOL] multiply({a}, {b})")
     return a * b
 

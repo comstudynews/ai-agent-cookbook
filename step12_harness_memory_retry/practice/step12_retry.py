@@ -1,3 +1,6 @@
+# TODO: 호출·재시도·기억 제한 비교 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -23,8 +26,10 @@ builder = StateGraph(State)
 builder.add_node(
     "call_api",
     unstable_api,
-    # TODO: ConnectionError를 최대 3회 Retry하도록 설정하세요.
-    retry_policy=...,
+    retry_policy=RetryPolicy(
+        max_attempts=3,
+        retry_on=ConnectionError,
+    ),
 )
 
 builder.add_edge(START, "call_api")

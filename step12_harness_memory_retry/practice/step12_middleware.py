@@ -1,3 +1,6 @@
+# TODO: 호출·재시도·기억 제한 비교 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import os
 from dotenv import load_dotenv
 from langchain.agents import create_agent
@@ -26,10 +29,12 @@ agent = create_agent(
     tools=[add],
     system_prompt="덧셈은 반드시 add 도구를 사용하세요.",
 
-    # 한 번의 Agent 실행에서 모델 호출 횟수를 최대 4회로 제한합니다.
+    # 모델 호출 최대 4회
     middleware=[
-        # TODO: 모델 호출을 최대 4회로 제한하세요.
-        ...
+        ModelCallLimitMiddleware(
+            run_limit=4,
+            exit_behavior="end",
+        )
     ],
 )
 

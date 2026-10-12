@@ -6,7 +6,7 @@ from langchain_openai import ChatOpenAI
 
 load_dotenv()
 
-# 실제 Vector DB 대신 Agent 흐름 확인용 정책 데이터를 준비합니다.
+# 학습용 정책 데이터
 POLICIES = {
     "환불": "결제 후 7일 이내이며 사용하지 않은 상품은 환불 요청이 가능합니다.",
     "배송": "배송은 결제 완료 후 영업일 기준 2~3일이 소요됩니다.",

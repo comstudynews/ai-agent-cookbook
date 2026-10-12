@@ -53,3 +53,12 @@ result = graph.invoke({
 
 print("최종 담당:", result["active_agent"])
 print("결과:", result["result"])
+
+# 기술 문의는 Handoff 없이 종료합니다.
+normal = graph.invoke({
+    "request": "프로그램 설치 오류가 발생했습니다.",
+    "active_agent": "tech_agent",
+    "result": "",
+})
+print("기술 문의 담당:", normal["active_agent"])
+print("기술 문의 결과:", normal["result"])

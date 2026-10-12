@@ -1,3 +1,6 @@
+# TODO: 호출·재시도·기억 제한 비교 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import os
 
 from dotenv import load_dotenv
@@ -15,8 +18,7 @@ model = ChatOpenAI(
 agent = create_agent(
     model=model,
     tools=[],
-    # TODO: InMemorySaver Checkpointer를 연결하세요.
-    checkpointer=...,
+    checkpointer=InMemorySaver(),
     system_prompt="이 대화에서 사용자가 알려준 정보를 기억해 답하세요.",
 )
 

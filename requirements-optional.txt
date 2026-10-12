@@ -1,0 +1,2 @@
+langgraph-swarm==0.1.0
+mypy>=1.18,<2

@@ -1,3 +1,6 @@
+# TODO: 분기와 반복 횟수 변경 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 from typing import Literal, TypedDict
 from langgraph.graph import StateGraph, START, END
 
@@ -21,15 +24,24 @@ def improve(state: State) -> dict:
     }
 
 def decide(state: State) -> Literal["retry", "end"]:
-    # TODO 1: 3회 미만이면 retry, 아니면 end를 반환하세요.
-    ...
+    # 세 번 실행 후 종료
+    if state["attempt_count"] < 3:
+        return "retry"
+    return "end"
 
 builder = StateGraph(State)
 builder.add_node("improve", improve)
 builder.add_edge(START, "improve")
 
 # decide()가 반환한 문자열을 실제 다음 경로와 연결합니다.
-# TODO 2: decide() 결과에 따라 반복/종료되는 conditional edge를 연결하세요.
+builder.add_conditional_edges(
+    "improve",
+    decide,
+    {
+        "retry": "improve",
+        "end": END,
+    },
+)
 
 graph = builder.compile()
 

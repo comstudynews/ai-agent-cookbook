@@ -1,3 +1,6 @@
+# TODO: Reducer·Worker 수 비교 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import operator
 from typing import Annotated, TypedDict
 from langgraph.graph import StateGraph, START, END
@@ -32,10 +35,11 @@ builder.add_node("research_b", research_b)
 builder.add_node("merge", merge)
 
 # START에서 두 Node로 동시에 Fan-out 합니다.
-# TODO 1: START에서 두 연구 Node로 Fan-out 하세요.
+builder.add_edge(START, "research_a")
+builder.add_edge(START, "research_b")
 
 # 리스트 형태의 start_key를 사용하면 두 upstream Node가 모두 끝난 뒤 merge가 실행됩니다.
-# TODO 2: 두 Node 완료 후 merge로 Fan-in 하세요.
+builder.add_edge(["research_a", "research_b"], "merge")
 
 builder.add_edge("merge", END)
 

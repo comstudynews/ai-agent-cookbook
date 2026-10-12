@@ -1,3 +1,6 @@
+# TODO: Streaming 이벤트 분석 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import os
 from dotenv import load_dotenv
 from langchain.agents import create_agent
@@ -35,8 +38,7 @@ model = ChatOpenAI(
 
 agent = create_agent(
     model=model,
-    # TODO: 상품 조회 Tool을 Agent에 연결하세요.
-    tools=[...],
+    tools=[get_product_info],
     system_prompt=(
         "상품의 재고나 가격에 관한 질문은 반드시 get_product_info 도구로 확인하세요. "
         "재고가 0이면 품절이라고 안내하세요."

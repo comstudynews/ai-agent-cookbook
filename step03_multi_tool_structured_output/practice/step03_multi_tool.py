@@ -1,3 +1,6 @@
+# TODO: Tool 선택과 응답 필드 비교 — 아래 실행 가능한 코드를 수정하여 결과를 비교하세요.
+# 교재 최신 API·State 구조와 일치하는 실습 시작 파일입니다.
+
 import os
 from dotenv import load_dotenv
 from langchain.agents import create_agent
@@ -25,11 +28,10 @@ model = ChatOpenAI(
     use_responses_api=True,
 )
 
-# 두 Tool을 모두 Agent에게 제공합니다.
+# Tool 등록
 agent = create_agent(
     model=model,
-    # TODO: add와 multiply 두 Tool을 모두 등록하세요.
-    tools=[...],
+    tools=[add, multiply],
     system_prompt=(
         "산술 계산은 반드시 제공된 도구를 사용하세요. "
         "덧셈은 add, 곱셈은 multiply를 사용하세요."
